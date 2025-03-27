@@ -7,9 +7,29 @@ import requests
 from datetime import datetime
 
 # Connect to Exness MT5
-if not mt5.initialize():
-    print("MT5 initialization failed")
-    quit()
+# if not mt5.initialize():
+#     print("MT5 initialization failed \n")
+#     quit()
+
+YOUR_LOGIN = 209191272
+YOUR_PWD = "asd123ASD_"
+SERVER = "Exness-MT5Trial9"
+
+# Connect to the MetaTrader 5 terminal
+if not mt5.initialize(login=YOUR_LOGIN, server=SERVER, password=YOUR_PWD):
+    print("Failed to connect to MT5\n")
+    mt5.shutdown()
+else:
+    print("Connected successfully!\n")
+
+
+account_info = mt5.account_info()
+if account_info is None:
+    print("Failed to get account information")
+else:
+    print(f"Account Info: {account_info}")
+
+
 
 # Trading Configuration
 PAIR = "XAUUSD"
@@ -65,7 +85,7 @@ def place_trade(balance):
     """ Place buy/sell trade based on strategy rules. """
     global loss_streak
     if loss_streak >= MAX_LOSSES:
-        print("Maximum consecutive losses reached. Stopping trading.")
+        print("Maximum consecutive losses reached. Stopping trading.\n")
         send_telegram_message("🚨 Trading paused due to 3 consecutive losses.")
         return None  # Stop trading
 
@@ -105,7 +125,7 @@ def place_trade(balance):
         send_telegram_message(message)
         return {"type": trade_type, "lot_size": lot_size, "entry": market_price, "sl": stop_loss, "tp": take_profit}
     else:
-        print(f"Trade failed: {result.comment}")
+        print(f"Trade failed: {result.comment} \n")
         return None
 
 def log_trade(trade, exit_price, profit_loss):
@@ -116,7 +136,7 @@ def log_trade(trade, exit_price, profit_loss):
     """
     cursor.execute(sql, (PAIR, trade["type"], trade["lot_size"], trade["entry"], trade["sl"], trade["tp"], exit_price, profit_loss))
     conn.commit()
-    print("Trade logged in database.")
+    print("Trade logged in database.\n")
 
 def trailing_stop(trade):
     """ Adjust stop loss dynamically when price moves in favor. """
@@ -130,12 +150,12 @@ def trailing_stop(trade):
             new_stop_loss = current_price - 20
             if new_stop_loss > stop_loss:
                 stop_loss = new_stop_loss
-                print(f"Updated Buy Trailing Stop: {stop_loss}")
+                print(f"Updated Buy Trailing Stop: {stop_loss} \n")
         elif trade_type == "sell" and current_price < entry_price - 30:
             new_stop_loss = current_price + 20
             if new_stop_loss < stop_loss:
                 stop_loss = new_stop_loss
-                print(f"Updated Sell Trailing Stop: {stop_loss}")
+                print(f"Updated Sell Trailing Stop: {stop_loss}\n")
 
         time.sleep(5)  # Delay to avoid excessive API calls
 
@@ -160,10 +180,10 @@ def trading_bot():
             else:
                 loss_streak = 0  # Reset loss streak on win
 
-            print(f"Updated Balance: {round(balance, 2)}")
+            print(f"Updated Balance: {round(balance, 2)} \n")
             send_telegram_message(f"📊 Balance Updated: {round(balance, 2)}")
 
         time.sleep(10)  # Wait before checking for new trades
 
 # Start Trading (Uncomment to run)
-# trading_bot()
+trading_bot()
