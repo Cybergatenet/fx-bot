@@ -22,12 +22,12 @@ if not mt5.initialize(login=YOUR_LOGIN, server=SERVER, password=YOUR_PWD):
 else:
     print("Connected successfully!\n")
 
-
-account_info = mt5.account_info()
-if account_info is None:
-    print("Failed to get account information")
-else:
-    print(f"Account Info: {account_info}")
+# Get account information
+# account_info = mt5.account_info()
+# if account_info is None:
+#     print("Failed to get account information\n")
+# else:
+#     print(f"Account Info: {account_info}\n")
 
 
 
