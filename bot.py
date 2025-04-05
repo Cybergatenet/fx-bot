@@ -185,5 +185,5 @@ def trading_bot():
 
         time.sleep(10)  # Wait before checking for new trades
 
-# Start Trading (Uncomment to run)
+# Start Trading
 trading_bot()
